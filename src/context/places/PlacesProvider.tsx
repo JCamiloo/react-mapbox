@@ -8,7 +8,7 @@ export interface PlacesState {
   userLocation?: [number, number];
 }
 
-const INITAL_STATE: PlacesState = {
+const INITIAL_STATE: PlacesState = {
   isLoading: true,
   userLocation: undefined
 }
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const PlacesProvider = ({ children }: Props) => {
-  const [state, dispatch] = useReducer(placesReducer, INITAL_STATE);
+  const [state, dispatch] = useReducer(placesReducer, INITIAL_STATE);
 
   useEffect(() => {
     getUserLocation()
