@@ -1,2 +1,2 @@
-export { PlacesContext } from './places/PlacesContext';
-export { PlacesProvider } from './places/PlacesProvider';
+export * from './places/PlacesContext';
+export * from './places/PlacesProvider';
