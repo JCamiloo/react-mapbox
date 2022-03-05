@@ -12,9 +12,9 @@ export const MapView = () => {
     if (!isLoading) {
       const map = new Map({
         container: mapDiv.current!,
-        style: 'mapbox://styles/mapbox/light-v10',
+        style: 'mapbox://styles/mapbox/streets-v11',
         center: userLocation,
-        zoom: 14
+        zoom: 14,
       });
 
       setMap(map);
@@ -26,14 +26,9 @@ export const MapView = () => {
   }
   
   return (
-    <div ref={mapDiv}
-      style={{
-        height: '100vh',
-        left: 0,
-        position: 'fixed',
-        top: 0,
-        width: '100vh'
-      }}
+    <div 
+      className="map"
+      ref={mapDiv} 
     >
     </div>
   )
