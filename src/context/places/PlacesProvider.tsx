@@ -35,7 +35,12 @@ export const PlacesProvider = ({ children }: Props) => {
   }, []);
 
   const searchPlacesByTerm = async (query: string) => {
-    if (query.length === 0 || !state.userLocation) {
+    if (!state.userLocation) {
+      throw new Error('There is not location available');
+    }
+
+    if (query.length === 0) {
+      dispatch({ type: 'setPlaces', payload: [] });
       return [];
     }
 
