@@ -1,7 +1,9 @@
 import { useReducer, useContext, useEffect } from 'react';
-import { Map, Marker, Popup } from 'mapbox-gl';
+import { AnySourceData, LngLatBounds, Map, Marker, Popup } from 'mapbox-gl';
 import { mapReducer } from './mapReducer';
 import { PlacesContext, MapContext } from '../';
+import { directionsApi } from '../../apis/directionsApi';
+import { DirectionsResponse } from '../../interfaces/directions.response';
 
 export interface MapState {
   isMapReady: boolean;
@@ -52,14 +54,68 @@ export const MapProvider = ({ children }: Props) => {
     }).setLngLat(map.getCenter())
       .addTo(map);
 
-
     dispatch({ type: 'setMap', payload: map });
+  }
+
+  const getRouteBetweenPoints = async (start: [number, number], end: [number, number]) => {
+    const response = await directionsApi.get<DirectionsResponse>(`/${start.join(',')};${end.join(',')}`);
+    const { geometry } = response.data.routes[0];
+    const { coordinates } = geometry;
+    const bounds = new LngLatBounds(start, start);
+
+    for (const coordinate of coordinates) {
+      const newCoord: [number, number] = [coordinate[0], coordinate[1]];
+      bounds.extend(newCoord);
+    }
+
+    state.map?.fitBounds(bounds, {
+      padding: 200
+    });
+
+    const sourceData: AnySourceData = {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates
+            }
+          }
+        ]
+      }
+    }
+
+    if (state.map?.getLayer('RouteString')) {
+      state.map.removeLayer('RouteString');
+      state.map.removeSource('RouteString');
+    }
+
+    state.map?.addSource('RouteString', sourceData);
+
+    state.map?.addLayer({
+      id: 'RouteString',
+      type: 'line',
+      source: 'RouteString',
+      layout: {
+        'line-cap': 'round',
+        'line-join': 'round'
+      },
+      paint: {
+        'line-color': 'black',
+        'line-width': 3
+      }
+    });
   }
 
   return (
     <MapContext.Provider value={{
       ...state,
-      setMap
+      setMap,
+      getRouteBetweenPoints
     }}>
       { children }
     </MapContext.Provider>

@@ -9,6 +9,7 @@ export interface PlacesState {
   isLoading: boolean;
   userLocation?: [number, number];
   isLoadingPlaces: boolean;
+  activePlaceId: string;
   places: Feature[]
 }
 
@@ -16,6 +17,7 @@ const INITIAL_STATE: PlacesState = {
   isLoading: true,
   userLocation: undefined,
   isLoadingPlaces: false,
+  activePlaceId: '',
   places: []
 }
 
